@@ -1,6 +1,7 @@
 import math
 import operator
 
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -80,30 +81,81 @@ def wylicz_dokladnosc(dane_testowe, prognoza):
     return procent
 
 
-def predykcja_kategorii(dane_treningowe, dane_testowe, k):
-    lista_predykcji_kategorii = []
+def prognoza_kategorii(dane_treningowe, dane_testowe, k):
+    lista_prognozy_kategorii = []
     for i in range(len(dane_testowe)):
         # zwróć listę sąsiadów
         sasiedzi = zwroc_liste_sasiadow(dane_treningowe, dane_testowe[i], k)
         # wybierz najczęstszą kategorię z listy sąsiadów
         najczestsza_kategoria = wylicz_najczestsza_kategorie(sasiedzi)
-        # dodaj do listy predykcji
-        lista_predykcji_kategorii.append(najczestsza_kategoria)
+        # dodaj do listy prognozji
+        lista_prognozy_kategorii.append(najczestsza_kategoria)
 
-    # zwróć listę z predykcjami
-    return lista_predykcji_kategorii
+    # zwróć listę z prognozjami
+    return lista_prognozy_kategorii
+
+
+def inputuzytkownika(string, dane_treningowe, k):
+    # podział na Numpy Array po przecinkach
+    splited_array = np.array([float(i) for i in string.split(',')])
+    sasiedzi = zwroc_liste_sasiadow(dane_treningowe, splited_array, k)
+    kategoria = wylicz_najczestsza_kategorie(sasiedzi)
+    print("Przewidywana kategoria to: " + kategoria)
+
+
+def rysujwykres(poczatek_zakresu, koniec_zakresu, co_ktore, dane_testowe, dane_treningowe, k):
+    poczatek_zakresu = int(poczatek_zakresu)
+    koniec_zakresu = int(koniec_zakresu) + 1
+    co_ktore = int(co_ktore)
+
+    wartosci_k = range(poczatek_zakresu, koniec_zakresu, co_ktore)
+
+    dokladnosci = []
+
+    for k in wartosci_k:
+        prognozy = []
+
+        for i in range(len(dane_testowe)):
+            sasiedzi = zwroc_liste_sasiadow(dane_treningowe, dane_testowe[i], k)
+            kategoria = wylicz_najczestsza_kategorie(sasiedzi)
+            prognozy.append(kategoria)
+
+        dokladnosci.append(wylicz_dokladnosc(dane_testowe, prognozy))
+
+    # faktyczne rysowanie wykresu
+    plt.plot(wartosci_k, dokladnosci)
+    plt.xlabel('k')
+    plt.ylabel('Dokładność')
+    plt.title('Dokładność vs. k')
+    plt.show()
 
 
 def main(plik_dane_treningowe, plik_dane_testowe, k):
     dane_treningowe = wczytaj_dane(plik_dane_treningowe)
     dane_testowe = wczytaj_dane(plik_dane_testowe)
 
-    predykcja = predykcja_kategorii(dane_treningowe, dane_testowe, k)
+    prognoza = prognoza_kategorii(dane_treningowe, dane_testowe, k)
 
-    dokladnosc = wylicz_dokladnosc(dane_testowe, predykcja)
+    dokladnosc = wylicz_dokladnosc(dane_testowe, prognoza)
     print("Dokładnosć wynosi: " + str(dokladnosc) + " %!")
+
+    while True:
+        dane = input("Wprowadź dane oddzielone przecinkami, lub wpisz 'q' by wyjść: ")
+
+        if dane.lower() == "q":
+            break
+        else:
+            inputuzytkownika(dane, dane_treningowe, k)
+
+    print("\nRYSOWANIE WYKRESU\n")
+    poczatek_zakresu_k = input("Wprowadź od jakiego k ma zaczynać się wykres: ")
+    koniec_zakresu_k = input("Wprowadź na jakim k ma się kończyć wykres: ")
+    co_ktore_k = input("Podaj co które k ma być na wykresie: ")
+
+    rysujwykres(poczatek_zakresu_k, koniec_zakresu_k, co_ktore_k, dane_testowe, dane_treningowe, k)
 
 
 if __name__ == '__main__':
     main('iris.data', 'iris.test.data', 3)
+    print()
     main('wdbc.data', 'wdbc.test.data', 3)
