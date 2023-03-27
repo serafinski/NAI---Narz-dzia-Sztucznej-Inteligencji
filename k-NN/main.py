@@ -169,6 +169,8 @@ def main(plik_dane_treningowe, plik_dane_testowe, k):
 
 
 if __name__ == '__main__':
-    main('iris.data', 'iris.test.data', 3)
+    iris = int(input("Wprowadź k: "))
+    main('iris.data', 'iris.test.data', iris)
     print()
-    main('wdbc.data', 'wdbc.test.data', 3)
+    wdbc = int(input("Wprowadź k: "))
+    main('wdbc.data', 'wdbc.test.data', wdbc)
