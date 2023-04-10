@@ -1,1 +1,1 @@
-# NAI---Narz-dzia-Sztucznej-Inteligencji
+# NAI---Narzędzia-Sztucznej-Inteligencji
