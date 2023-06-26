@@ -5,6 +5,6 @@
 Narzędzia sztucznej inteligencji (NAI) - 2022/2023
 </h1>
 
-<h2 align="center"> Prowadzący Ćwiczenia - Stanisław Horawa </h2>
+<h2 align="center"> Prowadzący Ćwiczenia - inz. Stanisław Horawa </h2>
 <h3>Opis</h3>
 Projekty z NAI napisane przeze mnie.
